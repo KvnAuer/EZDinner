@@ -38,8 +38,14 @@ public class DinnerApp {
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
-
+            connection.connect();
             int status = connection.getResponseCode();
+            
+            if(status != 200) {
+                throw new RuntimeException(connection.getResponseMessage());
+            } else {
+                System.out.println("SUCCESS!!!");
+            }
 
             String contentType = connection.getContentType();
 
