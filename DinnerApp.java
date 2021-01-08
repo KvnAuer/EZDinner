@@ -29,9 +29,7 @@ public class DinnerApp {
             + "&type=" + type
             + "&number=1&apiKey=" + Config.spoonacularAPIKey;
 
-            System.out.println(myUrl.replaceAll(" ", ""));
-
-            URL url = new URL(myUrl);
+            URL url = new URL(myUrl.replaceAll(" ", ""));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             //
@@ -48,12 +46,6 @@ public class DinnerApp {
             }
 
             String contentType = connection.getContentType();
-
-            System.out.println(contentType);
-
-            //connection.getContent();
-
-            System.out.println(status);
 
         } catch (Exception e) {
             //TODO: handle exception
