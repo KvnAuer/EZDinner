@@ -1,7 +1,6 @@
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-
+import java.util.Scanner;
 
 import java.io.*;
 
@@ -12,37 +11,49 @@ public class DinnerApp {
 
         try {
             
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            Scanner reader = new Scanner(System.in);
+
+            //User inputs to build the api url. 
+            
             System.out.println("Please enter cuisine type [African, American, British,"
                 + "Cajun, Caribbean, Chinese, Eastern European, European, French, German,"
                 + "Greek, Indian, Irish, Italian, Japanese, Jewish, Korean, Latin American,"
                 + "Mediterranean, Mexican, Middle Eastern, Nordic, Southern, Spanish, Thai, Vietnamese]");
-
-            String cuisine = reader.readLine();
-
+            String cuisine = reader.nextLine();
             System.out.println("main course, side dish, dessert, appetizer, breakfast, soup, beverage, sauce, marinade, finger food, snack, drink");
-
-            String type = reader.readLine();
-
+            String type = reader.nextLine();
+            reader.close();
             String myUrl = "https://api.spoonacular.com/recipes/random?"
             + "cuisine=" + cuisine
             + "&type=" + type
             + "&number=1&apiKey=" + Config.spoonacularAPIKey;
-
             URL url = new URL(myUrl.replaceAll(" ", ""));
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            //
+            //Connecting to api.
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
             connection.connect();
-            int status = connection.getResponseCode();
             
+            //
+            int status = connection.getResponseCode();
             if(status != 200) {
                 throw new RuntimeException(connection.getResponseMessage());
             } else {
-                System.out.println("SUCCESS!!!");
+                String inline = "";
+                Scanner scanner = new Scanner(url.openStream());
+
+                //Write all the JSON data into a string
+                while (scanner.hasNext()) {
+                    inline += scanner.nextLine();
+                }
+                System.out.print(inline);
+                scanner.close();
+
+                //parse the string into a JSON object
+                JSONParser parse = new JSONPparser();
+                JSONObject data_obj = (JSONObject) parse.parse(inline);
             }
 
             String contentType = connection.getContentType();
